@@ -1,11 +1,7 @@
-/***************************************************************************
- *
- *   FileName: elfparser.h
- *   Author: yusuf yamak
- *   Created On: 19.05.2021
- *   Desription:
- *
- ***************************************************************************/
+/* Copyright 2021 Yusuf YAMAK. All Rights Reserved.
+   Distributed under MIT license.
+   See file LICENSE for detail or copy at https://opensource.org/licenses/MIT
+*/
 #ifndef ELFPARSER_H
 #define ELFPARSER_H
 #include <cstdint>

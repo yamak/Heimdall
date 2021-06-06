@@ -1,11 +1,7 @@
-﻿/***************************************************************************
- *
- *   FileName: elfhasher.h
- *   Author: yusuf yamak
- *   Created On: 19.05.2021
- *   Desription:
- *
- ***************************************************************************/
+﻿/* Copyright 2021 Yusuf YAMAK. All Rights Reserved.
+   Distributed under MIT license.
+   See file LICENSE for detail or copy at https://opensource.org/licenses/MIT
+*/
 #ifndef ELFHASHER_H
 #define ELFHASHER_H
 #include <cstdint>

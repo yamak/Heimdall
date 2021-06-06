@@ -1,3 +1,7 @@
+/* Copyright 2021 Yusuf YAMAK. All Rights Reserved.
+   Distributed under MIT license.
+   See file LICENSE for detail or copy at https://opensource.org/licenses/MIT
+*/
 #include <trace.h>
 #include <kernel/pseudo_ta.h>
 #include <kernel/panic.h>
