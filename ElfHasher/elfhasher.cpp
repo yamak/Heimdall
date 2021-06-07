@@ -279,13 +279,13 @@ void ElfHasher::generateHeaderFile()
         outputFile<<EXECUTABLE_BOUNDRY_DEFINITION_STRING; // Start of EXEC_BOUNDRY Definition
         outputFile<<"{"<<std::endl;
 
-        for(auto& e:m_executableDigestsBoundry) // Add boundry of executables.
+        for(const auto& e:m_executableDigestsBoundry) // Add boundry of executables.
         {
             outputFile<<'\t'<<'\t';
             outputFile<<"{"<<"\""<<e.filename<<"\","<<e.startIndex<<","<<e.endIndex<<"}"<<","<<std::endl;
         }
 
-        for(auto& e:m_sharedObjectDigestsBoundry) // Add boundry of shared objects.
+        for(const auto& e:m_sharedObjectDigestsBoundry) // Add boundry of shared objects.
         {
             outputFile<<'\t'<<'\t';
             outputFile<<"{"<<"\""<<e.filename<<"\","<<e.startIndex+soOffset<<","<<e.endIndex+soOffset<<"}"<<","<<std::endl;
@@ -295,12 +295,12 @@ void ElfHasher::generateHeaderFile()
 
         outputFile<<EXECUTABLE_HASH_ARRAY_DEFINITION_STRING; // Start of definition of ELF_DIGEST_TABLE
         outputFile<<"{"<<std::endl;
-        for(auto& pair:m_executableDigests) // Add digests of executables
+        for(const auto& pair:m_executableDigests) // Add digests of executables
         {
             outputFile<<'\t'<<'\t';
             std::string hashArray;
             outputFile<<"{";
-            createHashArrayString(reinterpret_cast<unsigned char*>(&pair.digest),DIGEST_SIZE,hashArray); // Create digest array definition
+            createHashArrayString(reinterpret_cast<const unsigned char*>(&pair.digest),DIGEST_SIZE,hashArray); // Create digest array definition
             outputFile<<hashArray<<"},"; // add this result to ELF_DIGEST_TABLE
             if (pair.filename[pair.filename.length()-1]=='0') // If this is the first entry of a file, append file name as a comment,
                 outputFile<<"  // "<<pair.filename<<std::endl;
@@ -308,12 +308,12 @@ void ElfHasher::generateHeaderFile()
                 outputFile<<std::endl; // Append only new line
         }
 
-        for(auto& pair:m_sharedObjectDigests) // Add digests of executables
+        for(const auto& pair:m_sharedObjectDigests) // Add digests of executables
         {
             outputFile<<'\t'<<'\t';
             std::string hashArray;
             outputFile<<"{";
-            createHashArrayString(reinterpret_cast<unsigned char*>(&pair.digest),DIGEST_SIZE,hashArray); // Create digest array definition
+            createHashArrayString(reinterpret_cast<const unsigned char*>(&pair.digest),DIGEST_SIZE,hashArray); // Create digest array definition
             outputFile<<hashArray<<"},"; // add this result to ELF_DIGEST_TABLE
             if (pair.filename[pair.filename.length()-1]=='0') // If this is the first entry of a file, append file name as a comment,
                 outputFile<<"  // "<<pair.filename<<std::endl;
