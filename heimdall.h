@@ -29,7 +29,7 @@ struct anomaly_info
     char unregistered_elf_name[DNAME_INLINE_LEN];
 };
 
-heimdall_return_t heimdall_start(uint64_t init_task_addr);
+heimdall_return_t heimdall_start(void);
 const struct anomaly_info* heimdall_get_anomaly_info(void);
 
 #endif //HEIMDALL

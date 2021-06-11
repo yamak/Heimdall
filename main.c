@@ -33,13 +33,12 @@ register_phys_mem(MEM_AREA_RAM_NSEC,0x870000000,0x10000000);
  * @return
  */
 static TEE_Result start(uint32_t param_types,
-	TEE_Param params[4])
+	TEE_Param params[4] __unused)
 {
 	const struct anomaly_info* current_anomaly;
-	uint64_t init_task_addr;
 	heimdall_return_t res;
 
-	if (param_types != TEE_PARAM_TYPES(TEE_PARAM_TYPE_VALUE_INOUT,
+	if (param_types != TEE_PARAM_TYPES(TEE_PARAM_TYPE_NONE,
 				     TEE_PARAM_TYPE_NONE,
 				     TEE_PARAM_TYPE_NONE,
 				     TEE_PARAM_TYPE_NONE)) {
@@ -47,9 +46,7 @@ static TEE_Result start(uint32_t param_types,
 		return TEE_ERROR_BAD_PARAMETERS;
 	}
 
-	init_task_addr = params[0].value.a | (uint64_t)(params[0].value.b)<<32;
-
-    res = heimdall_start(init_task_addr); // Start heimdall
+    res = heimdall_start(); // Start heimdall
 
     if(res == HEIMDALL_SUCCESS) // If there isn't any anomaly
 	{
@@ -72,7 +69,7 @@ static TEE_Result start(uint32_t param_types,
 	{
         current_anomaly = heimdall_get_anomaly_info(); // Get anomaly info
         //Print Report.
-		DMSG("Unauthorized ELF!!!");
+		DMSG("Unregistered ELF!!!");
 		DMSG("ELF Name:%s",current_anomaly->unregistered_elf_name);
 	}
 	else

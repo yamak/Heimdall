@@ -1,3 +1,7 @@
+/* Copyright 2021 Yusuf YAMAK. All Rights Reserved.
+   Distributed under MIT license.
+   See file LICENSE for detail or copy at https://opensource.org/licenses/MIT
+*/
 #include <compiler.h>
 #include <stdio.h>
 #include <string.h>
@@ -12,7 +16,7 @@
 #include "hash_table.h"
 
 
-static TEE_Result calcutage_page_hash(void* pageAddr);
+static TEE_Result calcutage_page_hash(paddr_t pageAddr);
 static TEE_Result hash_init(void);
 static void hash_deinit(void);
 
@@ -20,7 +24,7 @@ void* hash_ctx;                                       // global hash context
 struct anomaly_info current_anomaly_info;             // Global anomaly info. heimdall_get_anomaly_info function returns address of this variable.
 const unsigned char* current_expected_digest;         // Digest read from hash table is stored in this variable.
 unsigned char current_calculated_digest[DIGEST_SIZE]; // Every calculated digest is stored in this array
-
+const struct task_struct* init_task;
 
 /**
  * @brief follow_page
@@ -32,12 +36,12 @@ unsigned char current_calculated_digest[DIGEST_SIZE]; // Every calculated digest
  * @param address Linux virtual address that wants to be converted to the physical address
  * @return Physical address
  */
-static void* follow_page(struct vm_area_struct *vma, unsigned long address)
+static paddr_t follow_page(struct vm_area_struct *vma, unsigned long address)
 {
 	uint64_t* pageTablePtr;
 	uint16_t pageTableIndex;
 	paddr_t pageTablePhyscalAddr;
-	uint64_t result;
+	paddr_t result;
 	struct mm_struct* vm_mm_virt;
 
         vm_mm_virt   = (struct mm_struct*)linux_virt_to_optee_virt(vma->vm_mm); // Get vma's vm_mm attribute as optee virtual address
@@ -60,7 +64,7 @@ static void* follow_page(struct vm_area_struct *vma, unsigned long address)
 
         result |= address&PAGE_OFFSET_MASK; // Add page offset to physical frame number.
 	
-        return (void*)result;
+        return result;
 
 }
 
@@ -117,7 +121,7 @@ static heimdall_return_t scan_task_vma(const struct task_struct* task)
 	struct vm_area_struct* vma_virt;
 	struct file* vm_file_virt;
 	struct dentry* dentry_virt;
-	void* physical_addr;
+	paddr_t physical_addr;
 	uint64_t page;
 	int page_num = 0;
 	const DigestBoundry* digestBoundry;
@@ -202,17 +206,14 @@ static void hash_deinit(void)
 }
 
 /**
- * @brief calcutage_page_hash
- * This function calculate hash of given page.
- * @param pageAddr Physical address of page
- * @return  If there isn't any error, it returns TEE_SUCCESS.
+ * @brief calcutage_page_hashvoid*
  */
-static TEE_Result calcutage_page_hash(void* pageAddr)
+static TEE_Result calcutage_page_hash(paddr_t pageAddr)
 {
 	TEE_Result res;
 	uint8_t* page_virt_addr;
 
-        page_virt_addr = (uint8_t*)phys_to_virt((paddr_t)pageAddr, MEM_AREA_RAM_NSEC); // Convert physical address to virtual address
+        page_virt_addr = (uint8_t*)phys_to_virt(pageAddr, MEM_AREA_RAM_NSEC); // Convert physical address to virtual address
 
         res=crypto_hash_update(hash_ctx, HASH_ALGO, page_virt_addr, PAGE_SIZE); // Append this page
         if (res)
@@ -251,12 +252,11 @@ const struct anomaly_info* heimdall_get_anomaly_info(void)
  * function. If it returns HEIMDALL_UNEXPECTED_DIGEST, attributes other than unregistered_elf_name
  * of anomaly_info is meaningful. If it returns HEIMDALL_UNREGISTERED_ELF, only unregistered_elf_name
  * attribute of anomaly_info struct is meaningful.
- * @param init_task_addr Virtual address of init_task
  * @return Result. If any vulneratbility didn't found, it returns HEIMDALL_SUCCESS
  */
-heimdall_return_t heimdall_start(uint64_t init_task_addr)
+heimdall_return_t heimdall_start(void)
 {
-        const struct task_struct* init_task=(struct task_struct*)linux_virt_to_optee_virt(init_task_addr); // Get physical address of init process
+        init_task=(struct task_struct*)phys_to_virt(INIT_TASK_PHYSICAL_ADDRESS, MEM_AREA_RAM_NSEC); // Get physical address of init process
         const struct task_struct* task;
         hash_init(); // Init hash function
         heimdall_return_t res = HEIMDALL_SUCCESS;

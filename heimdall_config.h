@@ -32,6 +32,7 @@
 #define KIMAGE_VOFFSET 0xFFFFFF8008000000 				// Kernel image Virtual address offset
 
 #define NEXT_LEVEL_TABLE_ADDRESS_MASK 0xFFFFFFFFF000    // Every page table 4kb page aligned 
+#define INIT_TASK_PHYSICAL_ADDRESS 0x1081500            // Init task physical address
 #define LEVEL1_TABLE_SHIFT 30 							// Level 1 page table start bit
 #define LEVEL2_TABLE_SHIFT 21							// Level 2 page table start bit
 #define LEVEL3_TABLE_SHIFT 12							// Level 3 page table start bit

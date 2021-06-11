@@ -14,18 +14,6 @@
 
 #define TA_HEIMDALL_CMD_START_VALUE		0
 
-uint64_t find_init_task_addr(void)
-{
-    FILE* file;
-    char buffer[30];
-    const char* bashScript="cat /proc/kallsyms | grep \" init_task\" | awk '{print $1}'";
-    file= popen(bashScript,"r");
-    fgets(buffer, sizeof (buffer), file);
-    fclose(file);
-    return strtoull(buffer,NULL,16);
-
-}
-
 int main(void)
 {
 	TEEC_Result res;
@@ -34,7 +22,6 @@ int main(void)
 	TEEC_Operation op;
 	TEEC_UUID uuid = TA_HEIMDALL_UUID;
 	uint32_t err_origin;
-	uint64_t init_task_addr;
 
 	res = TEEC_InitializeContext(NULL, &ctx);
 	if (res != TEEC_SUCCESS)
@@ -48,12 +35,8 @@ int main(void)
 
 	memset(&op, 0, sizeof(op));
 
-	op.paramTypes = TEEC_PARAM_TYPES(TEEC_VALUE_INOUT, TEEC_NONE,
+	op.paramTypes = TEEC_PARAM_TYPES(TEEC_NONE, TEEC_NONE,
 					 TEEC_NONE, TEEC_NONE);
-	init_task_addr=find_init_task_addr();
-	op.params[0].value.a = init_task_addr&0xFFFFFFFF;
-	op.params[0].value.b = (init_task_addr&0xFFFFFFFF00000000)>>32;
-
 
 	printf("Invoking TA to start heimdall %d\n", op.params[0].value.a);
 	res = TEEC_InvokeCommand(&sess, TA_HEIMDALL_CMD_START_VALUE, &op,

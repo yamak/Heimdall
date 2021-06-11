@@ -11,16 +11,15 @@ int main()
     ElfHasher elfHasher("./");
 
     //Append Executable directories
-    elfHasher.appendExecutableDirectory("/tftpboot/RootFs/bin");
-    elfHasher.appendExecutableDirectory("/tftpboot/RootFs/usr/bin");
-    elfHasher.appendExecutableDirectory("/tftpboot/RootFs/usr/sbin");
-    elfHasher.appendExecutableDirectory("/tftpboot/RootFs/home/root");
-    elfHasher.appendExecutableDirectory("/tftpboot/RootFs/sbin");
+    elfHasher.appendExecutableDirectory("/tftpboot/RootFs_Heimdall/bin");
+    elfHasher.appendExecutableDirectory("/tftpboot/RootFs_Heimdall/usr/bin");
+    elfHasher.appendExecutableDirectory("/tftpboot/RootFs_Heimdall/usr/sbin");
+    elfHasher.appendExecutableDirectory("/tftpboot/RootFs_Heimdall/sbin");
 
     //Append shared object directories
-    elfHasher.appendSharedObjectDirectory("/tftpboot/RootFs/lib");
-    elfHasher.appendSharedObjectDirectory("/tftpboot/RootFs/lib/security");
-    elfHasher.appendSharedObjectDirectory("/tftpboot/RootFs/usr/lib");
+    elfHasher.appendSharedObjectDirectory("/tftpboot/RootFs_Heimdall/lib");
+    elfHasher.appendSharedObjectDirectory("/tftpboot/RootFs_Heimdall/lib/security");
+    elfHasher.appendSharedObjectDirectory("/tftpboot/RootFs_Heimdall/usr/lib");
 
     elfHasher.start();
 

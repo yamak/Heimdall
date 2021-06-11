@@ -3,16 +3,12 @@
    See file LICENSE for detail or copy at https://opensource.org/licenses/MIT
 */
 #include "elfhasher.h"
+#include "elfparser.h"
 #include <dirent.h>
-#include <elfparser.h>
-#include <iostream>
 #include <openssl/sha.h>
 #include <sstream>
-#include <unordered_map>
-#include <utility>
 #include <sys/stat.h>
 #include <fstream>
-#include <unistd.h>
 
 /**
  * @brief ElfHasher::ElfHasher
